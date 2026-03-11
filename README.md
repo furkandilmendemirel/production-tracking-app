@@ -1,6 +1,5 @@
 # production-tracking-app
-# Production Tracking Application
- 
+
 ## Project Overview
  
 This project is a Production Tracking Application designed for employees working in a clothing distribution company. The purpose of the system is to track the location and status of fabrics and production materials inside a warehouse environment.
