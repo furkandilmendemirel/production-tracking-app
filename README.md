@@ -15,7 +15,7 @@ The system models the lifecycle of fabrics using object-oriented programming and
 State Pattern is used to manage transitions between fabric states such as Produced, Dyed, Quality Checked, and Shipped.
 
 ## Technologies Used
-- C++
+- Python
 - Object-Oriented Programming (OOP)
 - UML Diagrams
 
