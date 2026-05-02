@@ -1,0 +1,38 @@
+export const initialFabrics = [
+  {
+    id: 1,
+    barcode: "FAB-1001",
+    fabricType: "Cotton",
+    color: "White",
+    supplier: "Deniz Textile",
+    quantity: 120,
+    status: "Pending",
+  },
+  {
+    id: 2,
+    barcode: "FAB-1002",
+    fabricType: "Linen",
+    color: "Black",
+    supplier: "Ege Fabric",
+    quantity: 80,
+    status: "Processing",
+  },
+  {
+    id: 3,
+    barcode: "FAB-1003",
+    fabricType: "Denim",
+    color: "Blue",
+    supplier: "Akdeniz Textile",
+    quantity: 150,
+    status: "Quality Check",
+  },
+  {
+    id: 4,
+    barcode: "FAB-1004",
+    fabricType: "Wool",
+    color: "Gray",
+    supplier: "Marmara Fabric",
+    quantity: 60,
+    status: "Completed",
+  },
+];
