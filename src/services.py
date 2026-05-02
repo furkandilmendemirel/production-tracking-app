@@ -1,44 +1,92 @@
+from fabric import CuttingPlan
+
+
 class FabricService:
-    def _init_(self):
+    def __init__(self):
         self.fabrics = []
 
     def add_fabric(self, fabric):
         self.fabrics.append(fabric)
 
-    def send_to_quality_control(self, fabric):
-        fabric.state.send_to_quality_control(fabric)
+    def find_fabric_by_barcode(self, barcode):
+        for fabric in self.fabrics:
+            if fabric.barcode == barcode:
+                return fabric
 
-    def approve_quality(self, fabric):
-        fabric.state.approve_quality(fabric)
-        fabric.supplier.record_delivery(True)
+        return None
 
-    def reject_quality(self, fabric):
-        fabric.state.reject_quality(fabric)
-        fabric.supplier.record_delivery(False)
+    def move_to_next_stage(self, fabric):
+        if fabric.status() == "Completed":
+            print(f"{fabric.barcode} is already completed.")
+            return
 
-    def send_to_cutting(self, fabric, meter, model_name):
-        if fabric.state.name() != "Approved":
-            print("Only approved fabric can be sent to cutting.")
+        fabric.move_next_state()
+        print(f"{fabric.barcode} moved to {fabric.status()}.")
+
+    def create_cutting_plan(self, fabric, meter, model_name):
+        if fabric.status() not in ["Processing", "Quality Check"]:
+            print("Cutting plan can only be created for fabrics in Processing or Quality Check stage.")
             return None
 
-        fabric.state.send_to_cutting(fabric)
-        fabric.use_fabric(meter)
+        is_used = fabric.use_fabric(meter)
+
+        if not is_used:
+            return None
 
         plan = CuttingPlan(model_name, fabric, meter)
         fabric.add_history(f"Cutting plan created. Model: {model_name}")
 
         return plan
 
-    def send_to_production(self, fabric):
-        fabric.state.send_to_production(fabric)
-
-    def complete_production(self, fabric):
-        fabric.state.complete_production(fabric)
-
     def show_inventory(self):
         print("\nINVENTORY LIST")
+
         for fabric in self.fabrics:
             fabric.show_info()
+
+    def show_tracking_table(self):
+        print("\n================ FABRIC TRACKING TABLE ================")
+        print(
+            f"{'Barcode':<14}"
+            f"{'Type':<14}"
+            f"{'Color':<12}"
+            f"{'Supplier':<20}"
+            f"{'Stock(m)':<12}"
+            f"{'Status':<18}"
+            f"{'Badge':<10}"
+        )
+        print("-" * 100)
+
+        for fabric in self.fabrics:
+            print(
+                f"{fabric.barcode:<14}"
+                f"{fabric.fabric_type:<14}"
+                f"{fabric.color:<12}"
+                f"{fabric.supplier.name:<20}"
+                f"{fabric.available_meter():<12}"
+                f"{fabric.status():<18}"
+                f"{fabric.badge_color():<10}"
+            )
+
+        print("=" * 100)
+
+    def show_dashboard(self):
+        total_fabric_rolls = len(self.fabrics)
+        total_stock = sum(fabric.available_meter() for fabric in self.fabrics)
+
+        pending_count = sum(1 for fabric in self.fabrics if fabric.status() == "Pending")
+        processing_count = sum(1 for fabric in self.fabrics if fabric.status() == "Processing")
+        quality_check_count = sum(1 for fabric in self.fabrics if fabric.status() == "Quality Check")
+        completed_count = sum(1 for fabric in self.fabrics if fabric.status() == "Completed")
+
+        print("\n========== DASHBOARD ==========")
+        print("Total Fabric Rolls :", total_fabric_rolls)
+        print("Total Stock        :", total_stock, "meters")
+        print("Pending            :", pending_count)
+        print("Processing         :", processing_count)
+        print("Quality Check      :", quality_check_count)
+        print("Completed          :", completed_count)
+        print("===============================")
 
     def show_stock_by_type(self):
         stock = {}
@@ -50,12 +98,13 @@ class FabricService:
             stock[fabric.fabric_type] += fabric.available_meter()
 
         print("\nSTOCK BY FABRIC TYPE")
+
         for fabric_type, meter in stock.items():
             print(fabric_type, ":", meter, "meters")
 
 
 class SupplierService:
-    def _init_(self):
+    def __init__(self):
         self.suppliers = []
 
     def add_supplier(self, supplier):
@@ -68,7 +117,6 @@ class SupplierService:
             print("--------------------------------")
             print("Supplier:", supplier.name)
             print("Total Deliveries:", supplier.total_deliveries)
-            print("Approved Deliveries:", supplier.approved_deliveries)
-            print("Rejected Deliveries:", supplier.rejected_deliveries)
-            print("Quality Score:", round(supplier.quality_score(), 2), "%")
+            print("Completed Deliveries:", supplier.completed_deliveries)
+            print("Performance Score:", round(supplier.performance_score(), 2), "%")
             print("--------------------------------")
