@@ -1,6 +1,4 @@
-# production-tracking-app
-
-# Fabric Production Tracking System
+# PRODUCTION TRACKING APP
 
 ## Project Overview
 This project is designed to track fabrics throughout the production lifecycle in a supply chain system. Each fabric goes through multiple stages such as production, dyeing, quality control, and shipping.
