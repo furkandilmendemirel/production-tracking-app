@@ -1,0 +1,61 @@
+class Fabric:
+    def _init_(self, fabric_type, color, meter, supplier):
+        self.barcode = self.generate_barcode()
+        self.fabric_type = fabric_type
+        self.color = color
+        self.total_meter = meter
+        self.used_meter = 0
+        self.supplier = supplier
+        self.state = InStockState()
+        self.quality_approved = None
+        self.history = []
+
+        self.add_history("Fabric was added to the system.")
+
+    def generate_barcode(self):
+        return "FAB-" + str(uuid.uuid4())[:8].upper()
+
+    def change_state(self, new_state):
+        old_state = self.state.name()
+        self.state = new_state
+        self.add_history(f"State changed: {old_state} -> {new_state.name()}")
+
+    def add_history(self, message):
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.history.append(f"[{date}] {message}")
+
+    def available_meter(self):
+        return self.total_meter - self.used_meter
+
+    def use_fabric(self, meter):
+        if meter <= 0:
+            print("Used meter must be greater than zero.")
+            return
+
+        if meter > self.available_meter():
+            print("Not enough fabric available.")
+            return
+
+        self.used_meter += meter
+        self.add_history(f"{meter} meters of fabric were used.")
+
+    def show_info(self):
+        print("--------------------------------")
+        print("Barcode:", self.barcode)
+        print("Fabric Type:", self.fabric_type)
+        print("Color:", self.color)
+        print("Total Meter:", self.total_meter)
+        print("Used Meter:", self.used_meter)
+        print("Available Meter:", self.available_meter())
+        print("Supplier:", self.supplier.name)
+        print("State:", self.state.name())
+        print("--------------------------------")
+
+
+class CuttingPlan:
+    def _init_(self, model_name, fabric, required_meter):
+        self.id = str(uuid.uuid4())[:8]
+        self.model_name = model_name
+        self.fabric = fabric
+        self.required_meter = required_meter
+        self.created_date = datetime.now()
