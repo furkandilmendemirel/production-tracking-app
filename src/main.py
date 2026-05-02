@@ -1,31 +1,61 @@
-from projects.fabric import Fabric
-from projects.supplier import Supplier
-from projects.services import TrackingService
+from fabric import Fabric
+from services import FabricService, SupplierService
+from supplier import Supplier
 
 
-supplier1 = Supplier("S001", "ABC Textile", "Turkey", "contact@abc.com")
+def main():
+    fabric_service = FabricService()
+    supplier_service = SupplierService()
 
-fabric1 = Fabric("F001", "Cotton", "Black", "Turkey")
-fabric2 = Fabric("F002", "Linen", "White", "Italy")
+    supplier1 = Supplier("Deniz Textile")
+    supplier2 = Supplier("Ege Fabric")
+    supplier3 = Supplier("Akdeniz Textile")
 
-tracking_service = TrackingService()
+    supplier_service.add_supplier(supplier1)
+    supplier_service.add_supplier(supplier2)
+    supplier_service.add_supplier(supplier3)
 
-tracking_service.add_fabric(fabric1)
-tracking_service.add_fabric(fabric2)
+    fabric1 = Fabric("Cotton", "White", 120, supplier1, "Pending")
+    fabric2 = Fabric("Linen", "Black", 80, supplier2, "Processing")
+    fabric3 = Fabric("Denim", "Blue", 150, supplier3, "Quality Check")
+    fabric4 = Fabric("Wool", "Gray", 60, supplier1, "Completed")
 
-print("\nSupplier Information:")
-supplier1.show_info()
+    fabric_service.add_fabric(fabric1)
+    fabric_service.add_fabric(fabric2)
+    fabric_service.add_fabric(fabric3)
+    fabric_service.add_fabric(fabric4)
 
-print("\nAll Fabrics:")
-tracking_service.show_all_fabrics()
+    print("\nINITIAL PROJECT STATUS")
+    fabric_service.show_dashboard()
+    fabric_service.show_tracking_table()
 
-print("\nUpdating Fabric Status:")
-tracking_service.update_fabric_status("F001")
-tracking_service.update_fabric_status("F001")
-tracking_service.update_fabric_status("F001")
+    print("\nMOVING FABRICS TO NEXT STAGE")
+    fabric_service.move_to_next_stage(fabric1)
+    fabric_service.move_to_next_stage(fabric2)
+    fabric_service.move_to_next_stage(fabric3)
+    fabric_service.move_to_next_stage(fabric4)
 
-print("\nUpdated Fabric Information:")
-fabric1.show_info()
+    print("\nCREATING CUTTING PLAN")
+    cutting_plan = fabric_service.create_cutting_plan(
+        fabric2,
+        25,
+        "Summer Shirt Model A"
+    )
 
-print("\nFabric History:")
-fabric1.show_history()
+    if cutting_plan is not None:
+        cutting_plan.show_plan()
+
+    print("\nUPDATED PROJECT STATUS")
+    fabric_service.show_dashboard()
+    fabric_service.show_tracking_table()
+
+    fabric_service.show_stock_by_type()
+    supplier_service.show_supplier_performance()
+
+    print("\nFABRIC HISTORY")
+    for item in fabric1.history:
+        print(item)
+
+
+if __name__ == "__main__":
+    main()
