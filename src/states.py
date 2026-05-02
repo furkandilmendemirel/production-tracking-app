@@ -1,46 +1,75 @@
-class FabricState:
-    def next_stage(self, fabric):
+from abc import ABC, abstractmethod
+
+
+class FabricState(ABC):
+    @abstractmethod
+    def name(self):
         pass
 
-    def get_status(self):
+    @abstractmethod
+    def next_state(self):
+        pass
+
+    @abstractmethod
+    def badge_color(self):
         pass
 
 
-class ReceivedState(FabricState):
-    def next_stage(self, fabric):
-        fabric.state = ProducedState()
+class PendingState(FabricState):
+    def name(self):
+        return "Pending"
 
-    def get_status(self):
-        return "Received"
+    def next_state(self):
+        return ProcessingState()
 
-
-class ProducedState(FabricState):
-    def next_stage(self, fabric):
-        fabric.state = DyedState()
-
-    def get_status(self):
-        return "Produced"
+    def badge_color(self):
+        return "Yellow"
 
 
-class DyedState(FabricState):
-    def next_stage(self, fabric):
-        fabric.state = QualityCheckedState()
+class ProcessingState(FabricState):
+    def name(self):
+        return "Processing"
 
-    def get_status(self):
-        return "Dyed"
+    def next_state(self):
+        return QualityCheckState()
 
-
-class QualityCheckedState(FabricState):
-    def next_stage(self, fabric):
-        fabric.state = ShippedState()
-
-    def get_status(self):
-        return "Quality Checked"
+    def badge_color(self):
+        return "Orange"
 
 
-class ShippedState(FabricState):
-    def next_stage(self, fabric):
-        print("This fabric is already shipped. No next stage.")
+class QualityCheckState(FabricState):
+    def name(self):
+        return "Quality Check"
 
-    def get_status(self):
-        return "Shipped"
+    def next_state(self):
+        return CompletedState()
+
+    def badge_color(self):
+        return "Blue"
+
+
+class CompletedState(FabricState):
+    def name(self):
+        return "Completed"
+
+    def next_state(self):
+        return self
+
+    def badge_color(self):
+        return "Green"
+
+
+def create_state(status):
+    if status == "Pending":
+        return PendingState()
+
+    if status == "Processing":
+        return ProcessingState()
+
+    if status == "Quality Check":
+        return QualityCheckState()
+
+    if status == "Completed":
+        return CompletedState()
+
+    return PendingState()
