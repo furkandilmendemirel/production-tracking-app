@@ -8,7 +8,7 @@ from services import FabricService
 from supplier import Supplier
 
 
-def test_fabric_initial_state():
+def test_fabric_initial_state_is_pending():
     supplier = Supplier("Test Supplier")
     fabric = Fabric("Cotton", "White", 100, supplier)
 
@@ -16,7 +16,43 @@ def test_fabric_initial_state():
     assert fabric.color == "White"
     assert fabric.total_meter == 100
     assert fabric.available_meter() == 100
-    assert fabric.state.name() == "In Stock"
+    assert fabric.status() == "Pending"
+
+
+def test_fabric_moves_from_pending_to_processing():
+    supplier = Supplier("Test Supplier")
+    fabric = Fabric("Cotton", "White", 100, supplier)
+
+    fabric.move_next_state()
+
+    assert fabric.status() == "Processing"
+
+
+def test_fabric_moves_from_processing_to_quality_check():
+    supplier = Supplier("Test Supplier")
+    fabric = Fabric("Cotton", "White", 100, supplier, "Processing")
+
+    fabric.move_next_state()
+
+    assert fabric.status() == "Quality Check"
+
+
+def test_fabric_moves_from_quality_check_to_completed():
+    supplier = Supplier("Test Supplier")
+    fabric = Fabric("Cotton", "White", 100, supplier, "Quality Check")
+
+    fabric.move_next_state()
+
+    assert fabric.status() == "Completed"
+
+
+def test_completed_fabric_stays_completed():
+    supplier = Supplier("Test Supplier")
+    fabric = Fabric("Cotton", "White", 100, supplier, "Completed")
+
+    fabric.move_next_state()
+
+    assert fabric.status() == "Completed"
 
 
 def test_fabric_usage_reduces_available_meter():
@@ -29,28 +65,13 @@ def test_fabric_usage_reduces_available_meter():
     assert fabric.available_meter() == 70
 
 
-def test_quality_approval_changes_state():
+def test_create_cutting_plan_for_processing_fabric():
     supplier = Supplier("Test Supplier")
-    fabric = Fabric("Cotton", "White", 100, supplier)
+    fabric = Fabric("Cotton", "White", 100, supplier, "Processing")
     service = FabricService()
 
-    service.send_to_quality_control(fabric)
-    service.approve_quality(fabric)
+    plan = service.create_cutting_plan(fabric, 25, "Test Model")
 
-    assert fabric.state.name() == "Approved"
-    assert fabric.quality_approved is True
-    assert supplier.approved_deliveries == 1
-
-
-def test_quality_rejection_changes_state():
-    supplier = Supplier("Test Supplier")
-    fabric = Fabric("Cotton", "White", 100, supplier)
-    service = FabricService()
-
-    service.send_to_quality_control(fabric)
-    service.reject_quality(fabric)
-
-    assert fabric.state.name() == "Rejected"
-    assert fabric.quality_approved is False
-    assert supplier.rejected_deliveries == 1
-    
+    assert plan is not None
+    assert fabric.used_meter == 25
+    assert fabric.available_meter() == 75
