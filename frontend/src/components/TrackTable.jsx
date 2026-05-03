@@ -1,4 +1,4 @@
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "./StatusBadge.jsx";
 
 function TrackTable({ fabrics, onMoveNext }) {
   return (
