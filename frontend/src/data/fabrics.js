@@ -1,4 +1,4 @@
-export const initialFabrics = [
+const fabrics = [
   {
     id: 1,
     barcode: "FAB-1001",
@@ -36,3 +36,5 @@ export const initialFabrics = [
     status: "Completed",
   },
 ];
+
+export default fabrics;
