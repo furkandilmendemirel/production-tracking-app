@@ -2,8 +2,8 @@ import { useState } from "react";
 import logo from "../assets/protrack-logo.png";
 
 function Login({ onLogin }) {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("1234");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +26,9 @@ function Login({ onLogin }) {
         <div className="login-card">
           <p className="login-kicker">SECURE ACCESS</p>
           <h2>Production Tracking Login</h2>
-          <p className="login-help">Use <strong>admin</strong> / <strong>1234</strong> for demo access.</p>
+          <p className="login-help">
+            Demo access: <strong>admin</strong> / <strong>1234</strong>
+          </p>
 
           <form onSubmit={handleSubmit}>
             <label>Username</label>
