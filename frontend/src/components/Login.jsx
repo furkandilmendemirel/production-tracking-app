@@ -1,45 +1,57 @@
 import { useState } from "react";
+import logo from "../assets/protrack-logo.png";
 
 function Login({ onLogin }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("1234");
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    if (username === "admin" && password === "1234") {
-      localStorage.setItem("isLoggedIn", "true");
-      onLogin();
-      return;
-    }
-
-    alert("Invalid username or password");
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onLogin(username, password);
+  };
 
   return (
-    <main className="login-page">
-      <form className="login-card" onSubmit={handleSubmit}>
-        <h1>Production Tracking Login</h1>
-        <p>Use admin / 1234 for demo access.</p>
+    <div className="login-page">
+      <div className="login-wrapper">
+        <div className="login-brand-panel">
+          <img src={logo} alt="ProTrack Logo" className="login-logo" />
+          <h1>PROTRACK</h1>
+          <p className="brand-subtitle">Track. Manage. Deliver.</p>
+          <p className="brand-description">
+            Fabric Production Tracking System for monitoring inventory, suppliers,
+            and production stages with a structured and professional interface.
+          </p>
+        </div>
 
-        <label>Username</label>
-        <input
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-          placeholder="admin"
-        />
+        <div className="login-card">
+          <p className="login-kicker">SECURE ACCESS</p>
+          <h2>Production Tracking Login</h2>
+          <p className="login-help">Use <strong>admin</strong> / <strong>1234</strong> for demo access.</p>
 
-        <label>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="1234"
-        />
+          <form onSubmit={handleSubmit}>
+            <label>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
+            />
 
-        <button type="submit">Login</button>
-      </form>
-    </main>
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+            />
+
+            <button type="submit" className="login-button">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
 
