@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
+import Reports from "./components/Reports";
 import TrackTable from "./components/TrackTable";
 import fabricsData from "./data/fabrics";
 import "./styles.css";
@@ -9,6 +10,7 @@ const statusFlow = ["Pending", "Processing", "Quality Check", "Completed"];
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activePage, setActivePage] = useState("dashboard");
   const [fabrics, setFabrics] = useState(fabricsData);
 
   const handleLogin = (username, password) => {
@@ -21,12 +23,15 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setActivePage("dashboard");
   };
 
   const handleMoveNext = (id) => {
     setFabrics((prevFabrics) =>
       prevFabrics.map((fabric) => {
-        if (fabric.id !== id) return fabric;
+        if (fabric.id !== id) {
+          return fabric;
+        }
 
         const currentIndex = statusFlow.indexOf(fabric.status);
         const nextIndex =
@@ -61,9 +66,30 @@ function App() {
           </button>
         </header>
 
-        <Dashboard fabrics={fabrics} />
+        <nav className="page-tabs">
+          <button
+            className={activePage === "dashboard" ? "tab-button active" : "tab-button"}
+            onClick={() => setActivePage("dashboard")}
+          >
+            Dashboard
+          </button>
 
-        <TrackTable fabrics={fabrics} onMoveNext={handleMoveNext} />
+          <button
+            className={activePage === "reports" ? "tab-button active" : "tab-button"}
+            onClick={() => setActivePage("reports")}
+          >
+            Reports
+          </button>
+        </nav>
+
+        {activePage === "dashboard" && (
+          <>
+            <Dashboard fabrics={fabrics} />
+            <TrackTable fabrics={fabrics} onMoveNext={handleMoveNext} />
+          </>
+        )}
+
+        {activePage === "reports" && <Reports fabrics={fabrics} />}
       </div>
     </div>
   );
