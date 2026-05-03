@@ -280,7 +280,6 @@ body {
 /* =========================
    BUTTONS
 ========================= */
-
 .move-button {
   background: linear-gradient(135deg, var(--navy), #234f90);
   color: white;
@@ -292,15 +291,26 @@ body {
   font-weight: 800;
   cursor: pointer;
   min-width: 115px;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 18px rgba(15, 46, 95, 0.18);
 }
 
 .move-button:hover {
-  opacity: 0.95;
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #123a78, #2d63b0);
+  box-shadow: 0 12px 24px rgba(15, 46, 95, 0.28);
+}
+
+.move-button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(15, 46, 95, 0.18);
 }
 
 .move-button:disabled {
   background: #94a3b8;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* =========================
