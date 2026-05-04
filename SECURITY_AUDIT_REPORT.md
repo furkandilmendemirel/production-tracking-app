@@ -13,6 +13,7 @@ Current main structure:
 - .github/
 - diagrams/
 - docs/
+- frontend/
 - screenshots/
 - src/
 - tests/
