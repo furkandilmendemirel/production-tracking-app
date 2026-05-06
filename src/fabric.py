@@ -2,7 +2,7 @@ from datetime import datetime
 import uuid
 
 from states import create_state
-
+from states import InStockState
 
 class Fabric:
     def __init__(self, fabric_type, color, meter, supplier, status="Pending"):
