@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 
-from src.states import create_state
+from states import create_state
 
 class Fabric:
     def __init__(self, fabric_type, color, meter, supplier, status="Pending"):
