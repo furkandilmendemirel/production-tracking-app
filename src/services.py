@@ -1,4 +1,4 @@
-from src.fabric import CuttingPlan
+from fabric import CuttingPlan
 
 
 class FabricService:
